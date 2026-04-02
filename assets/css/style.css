@@ -68,7 +68,7 @@ body {
   flex: 1;
   padding: 18px;
   border-radius: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   color: var(--white);
 }
 .input-box input:focus {
@@ -78,14 +78,14 @@ body {
 .input-box button {
   padding: 12px 20px;
   border-radius: 12px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   background: white;
   cursor: pointer;
 }
 
 /* TODO LIST */
 .todo-list {
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-color);
   border-radius: 15px;
   padding: 15px;
   height: 300px;
@@ -133,9 +133,16 @@ footer a {
 }
 
 .icons span {
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-color);
   padding: 8px;
   border-radius: 8px;
+}
+.icons span:hover {
+    background-color: var(--hover-color);
+}
+
+.me {
+    
 }
 
 /* ===== TABLET ===== */
