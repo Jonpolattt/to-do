@@ -1,45 +1,113 @@
-window.addEventListener("DOMContentLoaded", function () {
-  const btnDark = document.querySelector(".dark-btn");
+class Todo {
+  constructor(text, completed = false) {
+    this.id = Date.now();
+    this.text = text;
+    this.completed = completed;
+  }
+}
 
-  const moonIcon = `
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-  class="lucide lucide-moon w-5 h-5">
-  <path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"></path>
-</svg>
-`;
-  const sunIcon = `
-<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"
-  class="lucide lucide-sun w-5 h-5">
-  <circle cx="12" cy="12" r="4"></circle>
-  <path d="M12 2v2"></path>
-  <path d="M12 20v2"></path>
-  <path d="m4.93 4.93 1.41 1.41"></path>
-  <path d="m17.66 17.66 1.41 1.41"></path>
-  <path d="M2 12h2"></path>
-  <path d="M20 12h2"></path>
-  <path d="m6.34 17.66-1.41 1.41"></path>
-  <path d="m19.07 4.93-1.41 1.41"></path>
-</svg>
-`;
+class TodoApp {
+  constructor() {
+    this.todos = JSON.parse(localStorage.getItem("todos")) || [];
 
-  if (localStorage.getItem("theme") === "dark") {
-    document.body.classList.add("dark");
-    btnDark.innerHTML = sunIcon;
-  } else {
-    btnDark.innerHTML = moonIcon;
+    this.list = document.querySelector(".todo-list");
+    this.input = document.querySelector(".input");
+    this.addBtn = document.querySelector(".add");
+    this.darkBtn = document.querySelector(".dark-btn");
+
+    this.init();
   }
 
-  btnDark.addEventListener("click", () => {
+  init() {
+    this.addBtn.addEventListener("click", () => this.addTodo());
+
+    this.input.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") this.addTodo();
+    });
+
+    this.darkBtn.addEventListener("click", () => this.toggleTheme());
+
+    const theme = localStorage.getItem("theme");
+    if (theme === "dark") document.body.classList.add("dark");
+
+    this.render();
+  }
+
+  save() {
+    localStorage.setItem("todos", JSON.stringify(this.todos));
+  }
+
+  addTodo() {
+    const text = this.input.value.trim();
+    if (!text) return;
+
+    const newTodo = new Todo(text);
+    this.todos.push(newTodo);
+
+    this.input.value = "";
+    this.save();
+    this.render();
+  }
+
+  toggleTodo(id) {
+    this.todos = this.todos.map((todo) =>
+      todo.id === id ? { ...todo, completed: !todo.completed } : todo,
+    );
+
+    this.save();
+    this.render();
+  }
+
+  deleteTodo(id) {
+    const el = document.querySelector(`[data-id="${id}"]`);
+
+    el.classList.add("removing");
+
+    setTimeout(() => {
+      this.todos = this.todos.filter((todo) => todo.id !== id);
+      this.save();
+      this.render();
+    }, 300);
+  }
+
+  render() {
+    this.list.innerHTML = "";
+
+    this.todos.forEach((todo) => {
+      const div = document.createElement("div");
+      div.className = `todo-item ${todo.completed ? "completed" : ""}`;
+      div.setAttribute("data-id", todo.id);
+
+      div.innerHTML = `
+        <input type="checkbox" ${todo.completed ? "checked" : ""}>
+        <span>${todo.text}</span>
+        <button class="delete-btn">❌</button>
+      `;
+
+      // toggle
+      div.querySelector("input").addEventListener("change", () => {
+        this.toggleTodo(todo.id);
+      });
+
+      // delete btn
+      div.querySelector(".delete-btn").addEventListener("click", () => {
+        this.deleteTodo(todo.id);
+      });
+
+      this.list.appendChild(div);
+
+      setTimeout(() => {
+        div.classList.add("show");
+      }, 10);
+    });
+  }
+
+  toggleTheme() {
     document.body.classList.toggle("dark");
 
-    if (document.body.classList.contains("dark")) {
-      btnDark.innerHTML = sunIcon;
-      localStorage.setItem("theme", "dark");
-    } else {
-      btnDark.innerHTML = moonIcon;
-      localStorage.setItem("theme", "light");
-    }
-  });
-});
+    const isDark = document.body.classList.contains("dark");
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  }
+}
+
+new TodoApp();

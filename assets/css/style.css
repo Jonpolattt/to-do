@@ -92,7 +92,7 @@ body {
 }
 
 .input-box button:hover {
-    background-color: var(--hover-color);
+  background-color: var(--hover-color);
 }
 
 /* TODO LIST */
@@ -101,7 +101,41 @@ body {
   border-radius: 15px;
   padding: 15px;
   height: 400px;
-  overflow-y: auto; /* ВАЖНО: только список скроллится */
+  overflow-y: auto; 
+}
+
+/* DELETE BUTTON */
+.delete-btn {
+  margin-left: auto;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  font-size: 16px;
+  opacity: 0.6;
+  transition: 0.3s;
+}
+
+.delete-btn:hover {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+/* ANIMATION (Notion style) */
+.todo-item {
+  opacity: 0;
+  transform: translateY(10px);
+  transition: all 0.3s ease;
+}
+
+.todo-item.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* REMOVE ANIMATION */
+.todo-item.removing {
+  opacity: 0;
+  transform: translateX(50px);
 }
 
 /* ITEM */
@@ -137,7 +171,7 @@ footer {
   color: #707070;
 }
 .icons a {
-    color: var(--grey);
+  color: var(--grey);
 }
 footer a {
   color: var(--text-color);
